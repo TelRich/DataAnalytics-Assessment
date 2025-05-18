@@ -265,7 +265,7 @@ WHERE plan_id IN (SELECT plan_id FROM users_with_either_plans)
 
 -- STEP 5
 account_inactivity_metric As ( -- 3,153
-SELECT 
+SELECT
 	uwep.owner_id,
     uwep.plan_id,
     uwep.type,
