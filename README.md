@@ -212,8 +212,8 @@ List all active plans (savings or investment) with no inflows in the last 365 da
 **Solution File:** `Assessment_Q3.sql`
 
 ```sql
--- STEP 1
 WITH
+-- STEP 1
 users_with_either_plans AS ( -- 3,153
 SELECT DISTINCT
 	owner_id,
