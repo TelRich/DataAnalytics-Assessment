@@ -40,9 +40,9 @@ Ensure your MySQL connection is configured properly and you have read permission
 
 ## Task 1: High-Value Customers with Multiple Products
 
-**Scenario:**: The business wants to identify customers who have both a savings and an investment plan (cross-selling opportunity).
-**Description:**
-Write a query to find customers with at least one funded savings plan AND one funded investment plan, sorted by total deposits.
+**Scenario:** The business wants to identify customers who have both a savings and an investment plan (cross-selling opportunity).
+
+**Description:** Write a query to find customers with at least one funded savings plan AND one funded investment plan, sorted by total deposits.
 
 **Solution File:** `Assessment_Q1.sql`
 
@@ -138,9 +138,12 @@ With proper domain knowledge from someone familiar with the business operations,
 ---
 
 ## Task 2: Transaction Frequency Analysis
+**Scenario:** The finance team wants to analyze how often customers transact to segment them (e.g., frequent vs. occasional users).
 
-**Description:**
-Classify customers by their average transactions per month into High (≥ 10), Medium (3–9), or Low (≤ 2).
+**Description:** Calculate the average number of transactions per customer per month and categorize them:
+* "High Frequency" (≥10 transactions/month)
+* "Medium Frequency" (3-9 transactions/month)
+* "Low Frequency" (≤2 transactions/month)s
 
 **Solution File:** `Assessment_Q2.sql`
 
@@ -206,8 +209,9 @@ This task was straightforward due to my prior experience with frequency analysis
 
 ## Task 3: Account Inactivity Alert
 
-**Description:**
-List all active plans (savings or investment) with no inflows in the last 365 days.
+**Scenario:** The ops team wants to flag accounts with no inflow transactions for over one year.
+
+**Description:** Find all active accounts (savings or investments) with no transactions in the last 1 year (365 days) .
 
 **Solution File:** `Assessment_Q3.sql`
 
@@ -324,13 +328,17 @@ This subtle wording difference created ambiguity - was I looking for accounts wi
 
 To properly identify "active" accounts (as specified in the task), I examined the table structure and found the `is_deleted` and `is_archived` fields, which allowed me to filter out accounts that had been intentionally deactivated. Additionally, I implemented a filter for `confirmed_amount > 0` to specifically address the "no inflow transactions" requirement mentioned in the scenario.
 
-
 ---
 
 ## Task 4: Customer Lifetime Value (CLV) Estimation
 
-**Description:**
-Compute each customer’s tenure, total transactions, and estimated CLV, where each transaction yields 0.1% profit of its value.
+**Scenario:** Marketing wants to estimate CLV based on account tenure and transaction volume (simplified model).
+
+**Description:** For each customer, assuming the profit_per_transaction is 0.1% of the transaction value, calculate:
+* Account tenure (months since signup) 
+* Total transactions
+* Estimated CLV (Assume: CLV = (total_transactions / tenure) * 12 * avg_profit_per_transaction)
+* Order by estimated CLV from highest to lowest
 
 **Solution File:** `Assessment_Q4.sql`
 
