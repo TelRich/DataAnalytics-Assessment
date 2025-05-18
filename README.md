@@ -102,9 +102,6 @@ FROM sip_deposit_metrics
 ORDER BY total_deposit DESC;
 
 /*
-
-APPROACH
-
 STEP 1:
 Find users who have both types of plans (cross-selling targets)
 We need to identify people with at least one savings AND one investment plan
@@ -123,8 +120,18 @@ Joining user info with plan counts and deposit totals
 */
 ```
 
-### Challenges
+### Approach
+To identify customers with both savings and investment plans, I took a methodical approach that prioritized accuracy in measuring their total deposit value.
 
+First, I identified all users who have at least one savings plan AND one investment plan by counting each type per user. This gave me the foundation for finding true cross-sell customers.
+
+Then, I gathered all relevant plan IDs associated with these customers, making sure to include only savings and investment plans. This step was crucial because some customers might have other plan types that we're not interested in for this analysis.
+
+Next came the deposit calculation - I aggregated all successful transactions tied to these plans, being careful to filter for positive inflows only. I made sure to convert the amounts from kobo to naira as specified in the requirements.
+
+Finally, I brought everything together by joining this deposit data with user information and plan counts, presenting a complete picture of our high-value cross-sell customers ordered by their total deposit amount.
+
+### Challenges
 Task 1 presented several analytical challenges that required careful consideration of the data model:
 
 The primary difficulty was determining the correct approach for calculating total deposits. Initially, I summed the `confirmed_amount` for all transactions associated with each user. However, I realized this approach would include transactions from accounts that weren't savings or investment plans, potentially skewing the results. I refined my methodology to explicitly link deposits to only the relevant plan types.
@@ -182,9 +189,6 @@ FROM avg_monthly_txns_per_user
 GROUP BY frequency_category;
 
 /*
-
-APPROACH
-
 STEP 1:
 Get monthly transaction counts for each user
 Shows basic activity patterns by month
@@ -201,8 +205,16 @@ Provides finance team with customer segments overview
 */
 ```
 
-### Challenges
+### Approach
+For the transaction frequency analysis, I decided to take a holistic view of customer activity by considering all transaction attempts, not just successful ones, since even failed transactions indicate engagement intent.
 
+I started by breaking down transaction counts by month for each customer. This monthly grouping is critical because seasonal patterns can significantly impact financial activity, and we need a standardized time unit for fair comparison.
+
+With these monthly counts established, I calculated the average number of transactions per month for each customer and categorized them according to the specified frequency bands. This segmentation transforms raw numbers into actionable customer categories.
+
+The final step aggregated these categories to produce the overview statistics needed by the finance team. This gives them a clear picture of how the customer base is distributed across activity levels and what the typical transaction volume is within each segment.
+
+### Challenges
 This task was straightforward due to my prior experience with frequency analysis. I chose to analyze all transactions rather than just successful ones to provide a complete picture of user engagement patterns.
 
 ---
@@ -291,9 +303,6 @@ WHERE no_of_txn = 0 AND (inactivity_days > 365 OR inactivity_days IS NULL)
 ORDER BY inactivity_days IS NULL, inactivity_days;
 
 /*
-
-APPROACH
-
 STEP 1:
 Identify all active savings and investment accounts
 Excludes deleted and archived accounts as they're not relevant for this analysis
@@ -320,8 +329,18 @@ Includes both long-dormant accounts and new accounts with no transactions
 */
 ```
 
-### Challenges
+### Approach
+Identifying dormant accounts required careful consideration of what "inactivity" truly means in the context of financial accounts.
 
+I began by isolating only active savings and investment accounts, deliberately excluding deleted or archived accounts since these aren't relevant to the ops team's retention efforts. This filtering ensures we're only looking at accounts that should be active.
+
+To properly measure inactivity, I approached the problem from two angles: first, I identified plans with absolutely no transaction history (completely unused accounts), and second, I found plans with past activity but no recent transactions.
+
+For plans with transaction history, I calculated both the last transaction date and the exact number of days since that activity. I also specifically checked for any positive inflow transactions within the past year.
+
+By combining these metrics, I created a comprehensive inactivity profile for each account. The final filter identifies truly dormant accounts - those with no transactions in over a year or with no transaction history at all, ordered by inactivity duration to prioritize the longest-dormant accounts.
+
+### Challenges
 One of the significant challenges I encountered in Task 3 was reconciling what appeared to be contradictory requirements between the scenario and task descriptions. The scenario stated: "The ops team wants to flag accounts with no inflow transactions for over one year," while the task instructed: "Find all active accounts with no transactions in the last 1 year (365 days)."
 
 This subtle wording difference created ambiguity - was I looking for accounts with absolutely no activity in the past year, or accounts whose last activity was more than a year ago? After careful consideration, I determined that the business intent was likely to identify dormant accounts with extended inactivity periods (over 365 days). These accounts would represent potential churn risks and re-engagement opportunities for the operations team.
@@ -388,9 +407,6 @@ FROM clv_metrics
 ORDER BY estimated_clv DESC;
 
 /*
-
-APPROACH
-
 STEP 1:
 Aggregate transaction data for each customer
 Calculate key metrics including total transactions and average profit per transaction
@@ -409,8 +425,18 @@ Sort by CLV from highest to lowest to identify most valuable customers
 */
 ```
 
-### Challenges
+### Approach
+Calculating Customer Lifetime Value required balancing mathematical precision with business reality.
 
+I started by aggregating all transaction data by customer, focusing on metrics that contribute to profit generation. This meant filtering for successful transactions and converting amounts from kobo to naira. The 0.1% profit margin was applied to calculate the average profit per transaction.
+
+Next, I joined this transaction data with user account information to determine each customer's tenure. The CLV formula requires understanding how long each customer has been with us relative to their transaction volume.
+
+The CLV calculation itself required careful handling of edge cases - protecting against division by zero for new customers and properly handling NULL values for customers without transaction history. I implemented a CASE statement to ensure these scenarios were managed gracefully.
+
+The final result ranks customers by their estimated lifetime value, providing marketing with a powerful tool for prioritizing customer relationships and tailoring retention strategies based on demonstrated financial value.
+
+### Challenges
 The primary challenge I faced with the Customer Lifetime Value (CLV) calculation was determining which transactions actually generate profit for the business. Without detailed domain knowledge of the financial model, I had to make reasoned assumptions based on the data patterns and my understanding of similar fintech platforms.
 
 Looking at Cowrywise's business model (focusing on Plans, Savings, and Investments), I hypothesized that the company likely doesn't profit when users withdraw funds from the platform. I observed transactions with status "circle" in the savings table that appeared to be withdrawal-related, despite the existence of a dedicated withdrawals table. This suggested complex transaction flows that would benefit from business context.
