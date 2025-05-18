@@ -335,7 +335,6 @@ Compute each customer’s tenure, total transactions, and estimated CLV, where e
 **Solution File:** `Assessment_Q4.sql`
 
 ```sql
--- 4. Customer Lifetime Value (CLV) Estimation
 WITH
 -- STEP 1
 user_txn_details AS (
