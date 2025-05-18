@@ -222,7 +222,7 @@ users_with_either_plans AS ( -- 3,153
 SELECT DISTINCT
 	owner_id,
     id AS plan_id,
-    CASE 
+    CASE
 		WHEN is_regular_savings = 1 THEN 'Savings'
         WHEN is_a_fund = 1 THEN 'Investment'
         ELSE 'Other Plans'
@@ -242,7 +242,7 @@ WHERE plan_id NOT IN (SELECT DISTINCT plan_id FROM adashi_staging.savings_saving
 
 -- STEP 3
 user_txns_last_1_year AS ( -- 1,073
-SELECT DISTINCT 
+SELECT DISTINCT
 	owner_id,
     plan_id,
 	COUNT(id) OVER (PARTITION BY plan_id) AS no_of_txns
