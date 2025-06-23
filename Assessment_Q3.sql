@@ -73,6 +73,7 @@ SELECT -- 1,976
 FROM account_inactivity_metric 
 WHERE no_of_txn = 0 AND (inactivity_days > 365 OR inactivity_days IS NULL)
 ORDER BY inactivity_days IS NULL, inactivity_days
+;
 
 
 /*
